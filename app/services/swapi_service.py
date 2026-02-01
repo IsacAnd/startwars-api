@@ -6,16 +6,22 @@ CACHE = {}
 CACHE_TTL = 75  # 1.25 min
 
 
-def get_with_cache(key: str, url: str):
+def get_with_cache(key: str, url: str, ttl: int = CACHE_TTL):
     now = time.time()
 
     if key in CACHE:
         cached_data, timestamp = CACHE[key]
-        if now - timestamp < CACHE_TTL:
+        if now - timestamp < ttl:
             return cached_data
 
-    response = requests.get(url)
-    data = response.json()
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+    except requests.RequestException:
+        if key in CACHE:
+            return CACHE[key][0]  # fallback
+        raise
 
     CACHE[key] = (data, now)
     return data
