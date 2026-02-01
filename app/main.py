@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.routes import people, films
+from app.core.security import api_key_middleware
 
 app = FastAPI(
     title="Star Wars API",
@@ -9,6 +10,7 @@ app = FastAPI(
 
 app.include_router(people.router)
 app.include_router(films.router)
+app.middleware("http")(api_key_middleware)
 
 @app.get("/")
 
