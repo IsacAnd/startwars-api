@@ -1,40 +1,42 @@
-from fastapi import APIRouter, Query, HTTPException
-from app.services.swapi_service import get_people
+# app/routes/people.py
+from fastapi import APIRouter, Query
+from app.clients.swapi_client import get_people, get_person, get_resource_by_url
+from app.services.people_service import (
+    filter_people,
+    sort_people,
+    normalize_people
+)
 
 router = APIRouter()
 
-ALLOWED_SORT_FIELDS = ["name", "height", "mass"]
 
-@router.get("/people")
+@router.get("/")
 def list_people(
     name: str = None,
     gender: str = None,
-    sort: str = Query(None, description="Campo para ordenação")
+    sort: str = Query(None)
 ):
-    if sort and sort not in ALLOWED_SORT_FIELDS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid sort field. Allowed: {ALLOWED_SORT_FIELDS}"
-        )
-
     data = get_people()
     results = data["results"]
 
-    if name:
-        results = [p for p in results if name.lower() in p["name"].lower()]
-
-    if gender:
-        results = [p for p in results if gender.lower() == p["gender"].lower()]
-
-    if sort:
-        results = sorted(results, key=lambda x: x.get(sort, ""))
+    results = filter_people(results, name, gender)
+    results = sort_people(results, sort)
+    results = normalize_people(results)
 
     return {
         "count": len(results),
-        "filters": {
-            "name": name,
-            "gender": gender,
-            "sort": sort
-        },
         "results": results
+    }
+
+
+@router.get("/{id}/full-profile")
+def get_full_profile(id: int):
+    person = get_person(id)
+    films = [get_resource_by_url(f) for f in person["films"]]
+    homeworld = get_resource_by_url(person["homeworld"])
+
+    return {
+        "person": normalize_people([person])[0],
+        "homeworld": homeworld,
+        "films": films
     }
