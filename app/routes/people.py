@@ -28,6 +28,14 @@ def list_people(
         "results": results
     }
 
+@router.get("/{id}")
+def get_person_detail(id: int):
+    person = get_person(id)
+
+    if "detail" in person:
+        raise HTTPException(status_code=404, detail="Person not found")
+
+    return normalize_people([person])[0]
 
 @router.get("/{id}/full-profile")
 def get_full_profile(id: int):

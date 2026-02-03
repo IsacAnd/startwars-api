@@ -53,6 +53,13 @@ def get_person(person_id: int):
     )
 
 
+def get_films():
+    return get_with_cache(
+        "films:all",
+        f"{BASE_URL}/films"
+    )
+
+
 def get_film(film_id: int):
     return get_with_cache(
         f"film:{film_id}",
