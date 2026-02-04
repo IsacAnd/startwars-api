@@ -30,3 +30,39 @@ A solução está planejada para ser implantada em ambiente Google Cloud Platfor
 
 ### Diagrama da Arquitetura
 
++------------+ +----------------+ +---------------------+ +------------+
+| | HTTP | | HTTP | | HTTP | |
+| Cliente +--------->+ API Gateway +--------->+ Cloud Function +--------->+ SWAPI |
+| | | (Autenticação, | | (FastAPI - lógica, | | (Dados |
+| | | Roteamento) | | filtros, cache) | | Star Wars)|
++------------+ +----------------+ +---------------------+ +------------+
+
+### Decisões Técnicas
+
+- **Cloud Functions:** Escolhido para facilitar o deploy serverless, escalabilidade automática e cobrança por uso.
+- **API Gateway:** Garante controle de acesso, autenticação simples via API Key e monitoramento.
+- **FastAPI:** Framework moderno, rápido e eficiente para desenvolvimento de APIs em Python.
+- **Consumo da SWAPI:** Os dados são consumidos sob demanda, com cache para reduzir chamadas e melhorar performance.
+- **Filtros e Ordenação:** Permitidos via query params para flexibilidade nas consultas.
+- **Autenticação:** Simples via token Bearer para segurança básica do endpoint.
+- **Testes:** Unitários para garantir qualidade do código.
+- **Documentação:** Swagger UI automático e README detalhado para uso e manutenção.
+
+### Como Rodar Localmente
+
+1. Clone o repositório
+2. Instale as dependências:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Rode a aplicação FastAPI localmente:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+4. Acesse a documentação interativa em:
+
+http://localhost:8000/docs
