@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from app.routes import people, films
 from app.core.security import api_key_middleware
 from app.core.rate_limit import rate_limit_middleware
+from app.routes import auth
+from app.routes import analytics
 
 app = FastAPI(
     title="Star Wars API",
@@ -9,8 +11,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
+app.include_router(auth.router)
 app.include_router(people.router, prefix="/people", tags=["People"])
 app.include_router(films.router, prefix="/films", tags=["Films"])
+app.include_router(analytics.router)
 
 app.middleware("http")(rate_limit_middleware)
 app.middleware("http")(api_key_middleware)

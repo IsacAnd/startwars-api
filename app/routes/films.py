@@ -1,5 +1,5 @@
-# app/routes/films.py
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from app.core.auth import get_current_user
 from app.clients.swapi_client import (
     get_films,
     get_film,
@@ -9,7 +9,7 @@ from app.clients.swapi_client import (
 router = APIRouter()
 
 @router.get("/")
-def list_films():
+def list_films(user=Depends(get_current_user)):
     data = get_films()
     results = data["results"]
 
@@ -19,7 +19,7 @@ def list_films():
     }
 
 @router.get("/{id}")
-def get_film_detail(id: int):
+def get_film_detail(id: int, user=Depends(get_current_user)):
     film = get_film(id)
 
     if "detail" in film:
@@ -28,7 +28,7 @@ def get_film_detail(id: int):
     return film
 
 @router.get("/{id}/characters")
-def get_film_characters(id: int):
+def get_film_characters(id: int, user=Depends(get_current_user)):
     film = get_film(id)
 
     if "detail" in film:

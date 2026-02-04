@@ -4,3 +4,6 @@ gunicorn
 requests
 pytest
 httpx
+python-jose
+passlib[bcrypt]
+redis
