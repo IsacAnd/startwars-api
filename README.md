@@ -31,7 +31,12 @@ A solução está planejada para ser implantada em ambiente Google Cloud Platfor
 ### Diagrama da Arquitetura
 
 +------------+ +----------------+ +---------------------+ +------------+
-| | HTTP | | HTTP | | HTTP | | | Cliente +--------->+ API Gateway +--------->+ Cloud Function +--------->+ SWAPI | | | | (Autenticação, | | (FastAPI - lógica, | | (Dados | | | | Roteamento) | | filtros, cache) | | Star Wars)|
++------------+          +----------------+          +---------------------+          +------------+
+|            |  HTTP    |                |  HTTP    |                     |  HTTP    |            |
+|   Cliente  +--------->+  API Gateway   +--------->+  Cloud Function     +--------->+   SWAPI    |
+|            |          | (Autenticação, |          | (FastAPI - lógica,  |          |  (Dados    |
+|            |          | Roteamento)    |          | filtros, cache)     |          |  Star Wars)|
++------------+          +----------------+          +---------------------+          +------------+
 +------------+ +----------------+ +---------------------+ +------------+
 
 ### Decisões Técnicas
